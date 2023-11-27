@@ -139,9 +139,7 @@ class User(AbstractUser):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     online = models.BooleanField(default=False)
-    follow = models.ManyToManyField(
-        "User", related_name="follow_user", blank=True, null=True
-    )
+    follow = models.ManyToManyField("User", related_name="follow_user")
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name", "birthday", "gender"]
     objects = CustomUserManager()

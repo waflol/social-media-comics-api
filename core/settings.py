@@ -63,11 +63,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "drf_yasg",
     "corsheaders",
+    "django_filters",
     "rest_framework",
     "rest_framework_simplejwt",
     "cloudinary",
     "channels",
     "home",
+    "user",
 ]
 
 MIDDLEWARE = [
@@ -108,6 +110,7 @@ ASGI_APPLICATION = "core.asgi.application"
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 PASSWORD_RESET_TIMEOUT = 86400
+AUTH_USER_MODEL = "user.User"
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": (
