@@ -1,0 +1,5 @@
+[flake8]
+# F401 are ignored temporarily, removing it before commiting new code
+extend-ignore = E501,F403,F401
+exclude = .git,.circleci,__pycache__,docs, venv, __init__.py, settings.py, development.py, staging.py
+max-complexity = 10

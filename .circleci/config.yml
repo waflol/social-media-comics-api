@@ -1,0 +1,109 @@
+# CircleCI configuration file
+version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.4.1
+executors:
+  backend-executor:
+    docker:
+      - image: cimg/python:3.10
+      - image: cimg/redis:7.0
+      - image: cimg/postgres:15.0
+        environment:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+
+
+jobs:
+  # Job one with a unique name
+  check-lint:
+    executor: backend-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Lint packages
+          command: |
+            pip install flake8
+      - run:
+          name: Check Lint
+          command: |
+            flake8 .
+
+
+
+
+  test-backend:
+    executor: backend-executor
+    environment:
+      DEBUG: 1
+      DB_ENGINE: postgresql
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: 5432
+      ENVIRONMENT: development
+    steps:
+      - checkout
+      - run:
+          name: Waiting for Postgres to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z localhost 5432 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Postgress && exit 1
+      - run:
+          name: Migrations and Migrate
+          command: |
+            pip install -r requirements.txt
+            python manage.py makemigrations
+            python manage.py migrate
+            python manage.py loaddata fixtures/users.json --app user.User
+            python manage.py loaddata fixtures/friends.json --app friend.Friend
+            python manage.py loaddata fixtures/rooms.json --app chat.RoomChat
+            python manage.py loaddata fixtures/memberships.json --app chat.Membership
+            python manage.py loaddata fixtures/filechats.json --app chat.File
+            python manage.py loaddata fixtures/messages.json --app chat.Message
+            python manage.py loaddata fixtures/posts.json --app post.Post
+            python manage.py loaddata fixtures/postimages.json --app post.Image
+            python manage.py loaddata fixtures/comments.json --app post.PostComment
+            python manage.py loaddata fixtures/interactions.json --app post.PostInteraction
+            python manage.py loaddata fixtures/notifications.json --app notification.Notification
+      - run:
+          name: Run unit test
+          command: |
+            pip install coverage
+            pip install pytest-django
+            coverage run -m pytest --junitxml=test-results/junit.xml
+            coverage html
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: htmlcov
+
+  deploy-prod:
+    docker:
+    # specify the version you desire here (you might not want node)
+    - image: circleci/node:7.10
+    steps:
+      - checkout
+      - run: ssh -oStrictHostKeyChecking=no -v $DROPLET_USER@$DROPLET_IP “./deploy.sh”
+
+workflows:
+  # Name of workflow
+  pipeline:
+    # List of jobs that will run
+    jobs:
+      - check-lint
+      - test-backend
+      - deploy-prod:
+          requires:
+            - test-backend
+            - check-lint
+          filters:
+            branches:
+              only:
+                - main
