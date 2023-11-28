@@ -29,7 +29,7 @@ if not SECRET_KEY:
     SECRET_KEY = "".join(random.choice(string.ascii_lowercase) for i in range(32))
 
 # Render Deployment Code
-DEBUG = bool(os.environ.get("DEBUG", 1))
+DEBUG = int(os.environ.get("DEBUG", 1))
 APPEND_SLASH = False
 
 if ENVIRONMENT == "development":
