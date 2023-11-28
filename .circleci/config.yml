@@ -1,7 +1,5 @@
 # CircleCI configuration file
 version: 2.1
-orbs:
-  browser-tools: circleci/browser-tools@1.4.1
 executors:
   backend-executor:
     docker:
@@ -37,30 +35,30 @@ jobs:
       DB_NAME: postgres
       DB_USER: postgres
       DB_PASSWORD: postgres
-      DB_HOST: 127.0.0.1
+      DB_HOST: localhost
       DB_PORT: 5432
       ENVIRONMENT: development
     steps:
       - checkout
+      - run:
+          name: install dependencies
+          command: |
+            pip install -r requirements.txt
+            pip install coverage
+            pip install pytest-django
       - run:
           name: install dockerize
           command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           environment:
             DOCKERIZE_VERSION: v0.6.1
       - run:
-          name: Wait for db
-          command: dockerize -wait tcp://$DB_HOST:$DB_PORT -timeout 1m
-
-      - run:
-          name: Migrations and Migrate
+          name: Wait for db and migrate
           command: |
-            pip install -r requirements.txt
+            dockerize -wait tcp://$DB_HOST:$DB_PORT -timeout 1m
             python manage.py migrate
       - run:
           name: Run unit test
           command: |
-            pip install coverage
-            pip install pytest-django
             coverage run -m pytest --junitxml=test-results/junit.xml
             coverage html
       - store_test_results:
