@@ -70,6 +70,9 @@ jobs:
           path: htmlcov
 
   deploy-prod:
+    docker:
+    # specify the version you desire here (you might not want node)
+    - image: circleci/node:7.10
     steps:
       - checkout
       - add_ssh_keys:
