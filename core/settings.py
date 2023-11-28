@@ -29,13 +29,15 @@ if not SECRET_KEY:
     SECRET_KEY = "".join(random.choice(string.ascii_lowercase) for i in range(32))
 
 # Render Deployment Code
-DEBUG = os.environ.get("DEBUG", True)
+DEBUG = bool(os.environ.get("DEBUG", 1))
 APPEND_SLASH = False
 
 if ENVIRONMENT == "development":
     from core.development import *
 else:
     from core.staging import *
+
+    DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
 
 CORS_ALLOW_HEADERS = [
     "accept",
