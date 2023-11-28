@@ -28,3 +28,5 @@ else:
             "PORT": DB_PORT,
         },
     }
+    if os.getenv("ENVIRONMENT", "development") != "development":
+        DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}

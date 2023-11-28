@@ -37,8 +37,6 @@ if ENVIRONMENT == "development":
 else:
     from core.staging import *
 
-    DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
-
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",
