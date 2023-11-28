@@ -43,6 +43,8 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo apt-get update
+            sudo apt-get install postgresql-client
             pip install -r requirements.txt
             pip install coverage
             pip install pytest-django
