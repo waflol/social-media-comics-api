@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from ..models import User
+from user.models import User
 
 REGISTER_URL = reverse("user:register")
 LOGIN_URL = reverse("user:login")
