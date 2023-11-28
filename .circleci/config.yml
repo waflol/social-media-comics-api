@@ -1,16 +1,18 @@
 # CircleCI configuration file
 version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.4.1
+  docker: circleci/docker@2.2.0
 executors:
   backend-executor:
     docker:
       - image: cimg/python:3.10
       - image: cimg/redis:7.0
-      - image: cimg/postgres:14.0
+      - image: cimg/postgres:15.0
         environment:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-
 
 jobs:
   # Job one with a unique name
