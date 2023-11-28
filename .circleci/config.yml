@@ -85,12 +85,12 @@ jobs:
           path: htmlcov
 
   deploy-prod:
-    docker:
-    # specify the version you desire here (you might not want node)
-    - image: circleci/node:7.10
     steps:
       - checkout
-      - run: ssh -oStrictHostKeyChecking=no -v $DROPLET_USER@$DROPLET_IP “./deploy.sh”
+      - add_ssh_keys:
+          fingerprints:
+            - "59:49:79:51:6d:cc:b8:d1:17:b6:2f:af:cd:ea:12:15"
+      - run: ssh -oStrictHostKeyChecking=no -v $DROPLET_USER@$DROPLET_IP "./deploy-v2.sh"
 
 workflows:
   # Name of workflow
