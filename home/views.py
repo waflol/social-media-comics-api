@@ -14,4 +14,4 @@ def index(request):
 
 @api_view(("GET",))
 def health_check(request):
-    return Response(data="ok", status=status.HTTP_200_OK)
+    return Response("ok", status=status.HTTP_200_OK)
