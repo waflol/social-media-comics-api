@@ -88,3 +88,7 @@ class MuteNotifyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "email", "mute"]
+
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
