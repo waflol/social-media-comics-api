@@ -8,6 +8,7 @@ from user.views import (
     UpdateMyProfileView,
     UserProfileView,
     UserRegisterAPIView,
+    ValidateEmail,
     ValidatePassword,
 )
 
@@ -19,6 +20,7 @@ urlpatterns = [
     path("/profile", MyProfileView.as_view(), name="profile"),
     path("/profile/update", UpdateMyProfileView.as_view(), name="update_profile"),
     path("/profile/<int:pk>", UserProfileView.as_view(), name="people_profile"),
+    path("/validate/email", ValidateEmail.as_view(), name="validate_email"),
     path("/validate/password", ValidatePassword.as_view(), name="validate_password"),
     path(
         "/password/reset/request",

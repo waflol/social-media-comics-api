@@ -13,6 +13,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from user.models import User
 from user.serializers import (
+    EmailSerializer,
     FollowUserSerializer,
     MuteNotifyUserSerializer,
     MyTokenObtainPairSerializer,
@@ -74,7 +75,6 @@ class UserRegisterAPIView(generics.CreateAPIView):
             print(serializer.data)
             headers = self.get_success_headers(serializer.data)
             return Response(
-                {"token": serializer.data["id"]},
                 status=status.HTTP_201_CREATED,
                 headers=headers,
             )
@@ -122,6 +122,21 @@ class UpdateMyProfileView(generics.UpdateAPIView):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+
+class ValidateEmail(APIView):
+    def post(self, request, format=None):
+        if not EmailSerializer(data=request.data).is_valid():
+            return Response(
+                data={"detail": "Enter a valid email address."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        email = request.data.get("email")
+        if not User.objects.filter(email=email).exists():
+            return Response(
+                data={"detail": "Email doesn't exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        return Response(data={"detail": "ok"}, status=status.HTTP_200_OK)
 
 
 class ValidatePassword(APIView):

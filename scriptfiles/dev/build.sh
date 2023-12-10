@@ -5,6 +5,7 @@ set -o errexit
 set -o pipefail
 # exits if any of your variables is not set
 set -o nounset
+pip install debugpy -t /tmp
 python manage.py flush --no-input
 python manage.py collectstatic --no-input
 python manage.py runserver 0.0.0.0:8000
